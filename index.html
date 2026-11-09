@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="CV interactivo de Herenia «Tina» Sarabia para Tranquilo Food Spot">
+<title>Tina para Tranquilo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400;62..125,500;62..125,700;62..125,800;62..125,900&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: carta en vertical al estilo Tranquilo (blanco, negro, rojo carmesí, grotesca condensada en mayúsculas). Portada → carta de bebidas (tarjetas que se giran) → recorrido → ticket de pedido con QR. Una taza fija se llena con el scroll. Un solo mundo visual cálido, a propósito. */
+:root {
+  --crema: #F2F0ED;
+  --leche: #FFFFFF;
+  --cafe: #141414;
+  --cafe-suave: #5E5B58;
+  --rojo: #B3172C;
+  --rojo-osc: #8E1022;
+  --caramelo: #E8E4DF;
+  --linea: #D9D5D0;
+  --papel: #FFFFFF;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Space Mono", "Courier New", ui-monospace, monospace;
+  --fill: 0;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--crema);
+  color: var(--cafe);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 96px;
+  overflow-x: hidden;
+}
+.wrap { max-width: 1040px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--display); font-weight: 900; font-stretch: 72%; text-transform: uppercase; letter-spacing: -.01em; line-height: .92; text-wrap: balance; margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--rojo); outline-offset: 3px; border-radius: 6px; }
+
+/* ---------- toldo ---------- */
+.toldo {
+  margin: 0 calc(-1 * max(16px, env(safe-area-inset-right, 0px))) 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  background: var(--cafe); color: #8a8784; overflow: hidden; white-space: nowrap;
+  font: 900 15px/1 var(--display); font-stretch: 80%; letter-spacing: .02em; padding: 9px 0;
+}
+.toldo span { display: inline-block; padding-right: 0; animation: ticker 28s linear infinite; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+.topbar {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 14px 0 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--cafe-suave);
+}
+.topbar .marca { color: var(--rojo); font-family: var(--display); font-weight: 900; letter-spacing: .01em; font-size: 22px; }
+.topbar .marca small { display: block; font: 400 10px var(--mono); color: var(--cafe-suave); letter-spacing: .1em; text-transform: lowercase; }
+
+/* ---------- portada ---------- */
+.hero { padding: 40px 0 28px; display: grid; gap: 28px; grid-template-columns: 1.35fr 1fr; align-items: center; }
+.hero > * { min-width: 0; }
+.eyebrow { font-weight: 700; text-transform: uppercase; letter-spacing: .16em; font-size: 12.5px; color: var(--rojo); margin: 0 0 12px; }
+.hero h1 { font-size: clamp(42px, 6.2vw, 84px); color: var(--cafe); overflow-wrap: anywhere; }
+.hero h1 .tina { color: var(--rojo); }
+.apodo { font-size: 18px; margin: 14px 0 0; color: var(--cafe-suave); }
+.apodo strong { color: var(--cafe); }
+.intro { margin: 18px 0 0; max-width: 54ch; font-size: 17px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 0; padding: 0; list-style: none; }
+.chips li { background: var(--leche); border: 1.5px solid var(--cafe); border-radius: 0; padding: 6px 13px; font-weight: 700; font-size: 14px; }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+  font: 700 16px/1 var(--body); padding: 15px 22px; border-radius: 0; border: 2px solid var(--cafe); text-transform: uppercase; letter-spacing: .06em; font-size: 14px;
+  background: var(--leche); color: var(--cafe); text-decoration: none; cursor: pointer;
+  box-shadow: 4px 4px 0 var(--cafe); transition: transform .15s, box-shadow .15s;
+}
+.btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--cafe); }
+.btn:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--cafe); }
+.btn.rojo { background: var(--rojo); color: #fff; border-color: var(--cafe); }
+
+/* pizarra lateral */
+.pizarra {
+  background: var(--cafe); color: #fff; border-radius: 0; padding: 28px 24px; position: relative;
+}
+.pizarra h2 { font-size: 34px; color: #fff; }
+.pizarra p { margin: 6px 0 16px; font-size: 14px; opacity: .85; }
+.pizarra dl { margin: 0; display: grid; gap: 10px; }
+.pizarra div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(255,255,255,.18); padding-bottom: 8px; }
+.pizarra dt { font-weight: 500; }
+.pizarra dd { margin: 0; font-family: var(--mono); font-weight: 700; color: #fff; text-align: right; white-space: nowrap; }
+.pizarra .sello {
+  position: absolute; top: -14px; right: 16px; background: var(--rojo); color: #fff; font: 900 14px var(--display);
+  text-transform: uppercase; letter-spacing: .04em; padding: 7px 12px;
+}
+
+/* ---------- carta ---------- */
+.seccion { padding: 44px 0 8px; }
+.seccion-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+.seccion-head h2 { font-size: clamp(40px, 7vw, 72px); }
+.seccion-head p { margin: 0; color: var(--cafe-suave); max-width: 40ch; }
+.carta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.bebida { perspective: 1200px; }
+.bebida button {
+  all: unset; display: block; width: 100%; cursor: pointer;
+}
+.bebida button:focus-visible { outline: 3px solid var(--rojo); outline-offset: 4px; }
+.giro { display: grid; transition: transform .6s cubic-bezier(.2,.8,.2,1); transform-style: preserve-3d; }
+.bebida.girada .giro { transform: rotateY(180deg); }
+.cara {
+  grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: 0; padding: 22px 20px 20px; border: 2px solid var(--cafe); display: flex; flex-direction: column; gap: 10px;
+}
+.frente { background: var(--leche); }
+.dorso { background: var(--cafe); color: #fff; transform: rotateY(180deg); }
+.taza-ico { width: 64px; height: 64px; }
+.bebida h3 { font-size: 32px; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; border: 1.5px solid currentColor; border-radius: 0; padding: 3px 8px; font-family: var(--mono); font-weight: 400; }
+.notas { margin: 0; font-size: 15px; }
+.notas b { color: var(--rojo); font-weight: 700; }
+.precio { margin-top: auto; padding-top: 12px; border-top: 1.5px dashed var(--linea); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 10px; align-items: baseline; font-size: 14px; }
+.precio span:last-child { font-family: var(--mono); font-weight: 700; text-align: right; }
+.girar { white-space: nowrap; font-size: 12.5px; font-weight: 700; color: var(--rojo); letter-spacing: .06em; text-transform: uppercase; }
+.dorso h3 { color: var(--rojo); font-size: 28px; }
+.dorso ul { margin: 0; padding-left: 18px; font-size: 14.5px; display: grid; gap: 6px; }
+.dorso .girar { color: #fff; margin-top: auto; padding-top: 8px; }
+.trabajo { display: grid; gap: 2px; font-size: 14.5px; }
+.trabajo strong { color: #fff; }
+.trabajo small { font-family: var(--mono); color: #a9a5a1; font-size: 12.5px; }
+.trabajo + .trabajo { border-top: 1px solid rgba(255,255,255,.18); padding-top: 8px; }
+.barras { display: grid; gap: 9px; }
+.barra { display: grid; gap: 4px; font-size: 14px; }
+.barra div { height: 8px; border-radius: 999px; background: rgba(255,255,255,.16); overflow: hidden; }
+.barra i { display: block; height: 100%; background: var(--rojo); border-radius: inherit; }
+
+/* ---------- recorrido ---------- */
+.recorrido { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 0; list-style: none; padding: 0; margin: 0; position: relative; }
+.recorrido::before { content: ""; position: absolute; left: 12%; right: 12%; top: 27px; border-top: 3px dotted var(--cafe-suave); }
+.recorrido li { text-align: center; position: relative; padding: 0 6px; }
+.recorrido .punto {
+  width: 56px; height: 56px; margin: 0 auto 10px; border-radius: 50%; background: var(--leche); border: 2px solid var(--cafe);
+  display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 16px; position: relative;
+}
+.recorrido li:last-child .punto { background: var(--rojo); color: #fff; border-color: var(--rojo); }
+.recorrido strong { display: block; font-size: 16px; }
+.recorrido span { font-size: 13.5px; color: var(--cafe-suave); }
+
+/* ---------- ticket ---------- */
+.pedido { padding: 52px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 32px; align-items: start; }
+.pedido-texto h2 { font-size: clamp(40px, 7vw, 72px); }
+.pedido-texto p { max-width: 44ch; }
+.contacto { display: grid; gap: 10px; margin-top: 18px; }
+.dato { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; background: var(--leche); border: 1.5px solid var(--linea); border-radius: 0; padding: 10px 14px; }
+.dato span { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; color: var(--cafe-suave); min-width: 72px; }
+.dato b { font-weight: 700; user-select: all; word-break: break-all; flex: 1 1 160px; }
+.copiar { font: 700 12px var(--body); text-transform: uppercase; letter-spacing: .06em; border: 1.5px solid var(--cafe); background: transparent; color: var(--cafe); border-radius: 0; padding: 5px 12px; cursor: pointer; }
+.copiar.ok { background: var(--cafe); color: #fff; }
+
+.ticket {
+  background: var(--papel); font-family: var(--mono); color: #141414; padding: 26px 22px 30px; position: relative;
+  box-shadow: 0 22px 40px -24px rgba(0,0,0,.45); transform: rotate(-1deg);
+  -webkit-mask: radial-gradient(9px at 50% 100%, transparent 98%, #000) 0 100% / 18px 51% repeat-x, radial-gradient(9px at 50% 0, transparent 98%, #000) 0 0 / 18px 51% repeat-x;
+          mask: radial-gradient(9px at 50% 100%, transparent 98%, #000) 0 100% / 18px 51% repeat-x, radial-gradient(9px at 50% 0, transparent 98%, #000) 0 0 / 18px 51% repeat-x;
+}
+.ticket .t-marca { text-align: center; font: 900 36px/1 var(--display); color: var(--rojo); letter-spacing: .01em; }
+.ticket .t-sub { text-align: center; font-size: 12px; margin: 6px 0 14px; line-height: 1.4; }
+.ticket hr { border: 0; border-top: 2px dashed #141414; margin: 12px 0; opacity: .7; }
+.ticket table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ticket td { padding: 3px 0; vertical-align: top; }
+.ticket td:last-child { text-align: right; white-space: nowrap; padding-left: 10px; }
+.ticket .total td { font-weight: 700; font-size: 17px; padding-top: 6px; }
+.ticket .meta { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; flex-wrap: wrap; }
+.qr { width: 190px; max-width: 100%; margin: 14px auto 6px; aspect-ratio: 1; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.ticket .escanea { text-align: center; font-size: 13px; font-weight: 700; }
+.ticket .url { text-align: center; font-size: 11px; word-break: break-all; opacity: .75; margin-top: 4px; }
+.ticket .btn { width: 100%; margin-top: 16px; font-family: var(--body); }
+.gracias { text-align: center; font-size: 12.5px; margin-top: 14px; }
+.cod-barras { height: 38px; margin: 10px auto 0; width: 80%; background: repeating-linear-gradient(90deg, #141414 0 2px, transparent 2px 4px, #141414 4px 7px, transparent 7px 9px, #141414 9px 10px, transparent 10px 13px); }
+
+footer { text-align: center; padding: 48px 0 0; font-size: 13.5px; color: var(--cafe-suave); }
+
+/* ---------- barista (scroll) ---------- */
+.barista {
+  position: fixed; z-index: 20; width: 260px;
+  right: calc(14px + env(safe-area-inset-right, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  background: var(--leche); border: 2px solid var(--cafe); box-shadow: 4px 4px 0 var(--cafe);
+}
+.barista canvas { display: block; width: 100%; aspect-ratio: 4 / 3; border-bottom: 2px solid var(--cafe); }
+.barista .pie { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 10px; }
+.barista .paso { min-width: 0; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; line-height: 1.2; }
+.barista .paso small { display: flex; align-items: center; gap: 6px; font: 400 10.5px var(--mono); color: var(--cafe-suave); text-transform: none; letter-spacing: 0; margin-top: 3px; }
+.barista .dots { display: inline-flex; gap: 3px; }
+.barista .dots i { width: 7px; height: 7px; background: var(--linea); display: block; }
+.barista .dots i.on { background: var(--rojo); }
+#barista-toggle { flex: none; font: 700 10.5px var(--body); text-transform: uppercase; letter-spacing: .05em; border: 1.5px solid var(--cafe); background: transparent; color: var(--cafe); padding: 4px 7px; cursor: pointer; }
+.barista.min { width: auto; }
+.barista.min canvas { display: none; }
+
+/* aparición suave (visible en reposo) */
+.sube { animation: sube .7s cubic-bezier(.2,.8,.2,1) both; }
+.sube.d1 { animation-delay: .08s; } .sube.d2 { animation-delay: .16s; } .sube.d3 { animation-delay: .24s; }
+@keyframes sube { from { transform: translateY(14px); } to { transform: none; } }
+
+/* ---------- tarjeta imprimible ---------- */
+.print-card { display: none; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 880px) {
+  .carta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero { grid-template-columns: 1fr; }
+  .pizarra { transform: rotate(.8deg); }
+  .pedido { grid-template-columns: 1fr; }
+  .ticket { max-width: 420px; width: 100%; margin: 0 auto; }
+}
+@media (max-width: 560px) {
+  .carta { grid-template-columns: 1fr; }
+  .hero { padding-top: 26px; }
+  .recorrido { grid-template-columns: repeat(2, minmax(0,1fr)); row-gap: 22px; }
+  .recorrido::before { display: none; }
+  .ctas .btn { flex: 1 1 100%; }
+  .barista { width: 168px; }
+  .barista .pie { padding: 5px 7px; }
+  .barista .paso { font-size: 10px; }
+  .barista .paso small { font-size: 9.5px; }
+  #barista-toggle { font-size: 9.5px; padding: 3px 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toldo span { animation: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .bebida.girada .giro { transform: none; }
+  .bebida.girada .frente { visibility: hidden; }
+  .bebida.girada .dorso { transform: none; }
+  .bebida:not(.girada) .dorso { visibility: hidden; }
+}
+
+@media print {
+  @page { size: A5 portrait; margin: 12mm; }
+  body { background: #fff; padding: 0; }
+  body > *:not(.print-card) { display: none !important; }
+  .print-card { display: grid !important; gap: 14px; text-align: center; color: #141414; font-family: var(--body); }
+  .print-card .pm { font-family: var(--display); font-weight: 900; color: #B3172C; font-size: 22px; }
+  .print-card h1 { font-size: 40px; }
+  .print-card p { margin: 0; }
+  .print-card .qrp { width: 62mm; margin: 6px auto; }
+  .print-card .qrp svg { width: 100%; height: auto; }
+  .print-card .lista { font-size: 13px; line-height: 1.6; }
+  .print-card .cont { font-family: var(--mono); font-size: 13px; }
+  .print-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+
+<div class="toldo" aria-hidden="true"><span>TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; TRANQUILO. &nbsp;&nbsp; </span></div>
+<div class="wrap">
+  <div class="topbar">
+    <span class="marca">TRANQUILO.<small>food spot</small></span>
+    <span>Candidata del día · Alicante</span>
+  </div>
+
+  <header class="hero">
+    <div>
+      <p class="eyebrow sube">Camarera · Bartender · Fan del café</p>
+      <h1 class="sube d1">Herenia Sarabia,<br>o simplemente <span class="tina">Tina.</span></h1>
+      <p class="apodo sube d2">Pide lo de siempre: <strong>buen trato, ritmo y una sonrisa</strong>.</p>
+      <p class="intro sube d2">Más de cinco años detrás de la barra en España, Estados Unidos e Irlanda. Preparo cafés, cócteles y vinos, llevo caja y TPV, y mantengo la mente y la barra impecables cuando la cola llega a la puerta. Me encanta la cultura del café, los entornos internacionales donde conocer nuevas culturas y crear sitios donde la gente quiere quedarse.</p>
+      <p class="intro sube d2"><strong>En hora punta, cero errores:</strong> sé que rehacer un pedido cuesta mucho más tiempo que hacerlo bien a la primera, y sé organizar varios pedidos a la vez sin perder el ritmo.</p>
+      <ul class="chips sube d3">
+        <li>+5 años en hostelería</li>
+        <li>3 idiomas + italiano</li>
+        <li>4 países</li>
+        <li>Barra, sala y caja</li>
+      </ul>
+      <div class="ctas sube d3">
+        <a class="btn" href="#carta">Ver la carta</a>
+        <a class="btn rojo" href="#pedido">Pedir a Tina</a>
+      </div>
+    </div>
+    <aside class="pizarra sube d2" aria-label="Especialidades">
+      <span class="sello">¡Recién hecha!</span>
+      <h2>Pizarra del día</h2>
+      <p>Lo que vas a encontrar en esta candidata</p>
+      <dl>
+        <div><dt>Atención al cliente</dt><dd>siempre</dd></div>
+        <div><dt>Cafés y cócteles</dt><dd>a mano</dd></div>
+        <div><dt>Caja y TPV</dt><dd>cuadrada</dd></div>
+        <div><dt>Barra limpia</dt><dd>100 %</dd></div>
+        <div><dt>Hora punta</dt><dd>sin errores</dd></div>
+        <div><dt>Varios pedidos a la vez</dt><dd>organizados</dd></div>
+      </dl>
+    </aside>
+  </header>
+
+  <section class="seccion" id="carta" aria-labelledby="carta-t">
+    <div class="seccion-head">
+      <h2 id="carta-t">La carta de <span style="color:var(--rojo)">Tina.</span></h2>
+      <p>Toca cada bebida para darle la vuelta y ver qué lleva dentro.</p>
+    </div>
+
+    <div class="carta">
+      <!-- 1 -->
+      <article class="bebida">
+        <button type="button" aria-expanded="false" aria-label="Espresso de experiencia. Toca para ver detalles">
+          <div class="giro">
+            <div class="cara frente">
+              <svg class="taza-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 26h30v14a12 12 0 0 1-12 12h-6a12 12 0 0 1-12-12z" fill="#141414"/><path d="M44 30h4a6 6 0 0 1 0 12h-4" fill="none" stroke="#141414" stroke-width="4"/><ellipse cx="29" cy="26" rx="15" ry="3" fill="#7A4B2E"/><rect x="8" y="54" width="44" height="4" rx="2" fill="#B3172C"/></svg>
+              <div class="tags"><span class="tag">Doble</span><span class="tag">Intenso</span></div>
+              <h3>Espresso de experiencia</h3>
+              <p class="notas">Cinco años de <b>barra a tope</b>, servicio en tres países y cero errores en hora punta.</p>
+              <div class="precio"><span class="girar">Dar la vuelta ↻</span><span>Precio: 3 bares</span></div>
+            </div>
+            <div class="cara dorso">
+              <h3>Lo que lleva</h3>
+              <div class="trabajo"><strong>Camarera · The Port House</strong><small>Irlanda</small>Cafés, vinos, cócteles y cervezas. Comandas, TPV y caja.</div>
+              <div class="trabajo"><strong>Camarera · El Coyote</strong><small>España · dic 2021 – dic 2022</small>Recepción de clientes, bebidas, barra limpia y reposición.</div>
+              <div class="trabajo"><strong>Bartender · Exit 8</strong><small>EE. UU. · nov 2020 – oct 2021</small>Reservas, mesas, preparación de barra y resolución de quejas.</div>
+              <span class="girar">Volver ↺</span>
+            </div>
+          </div>
+        </button>
+      </article>
+
+      <!-- 2 -->
+      <article class="bebida">
+        <button type="button" aria-expanded="false" aria-label="Latte de idiomas. Toca para ver detalles">
+          <div class="giro">
+            <div class="cara frente">
+              <svg class="taza-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 14h28l-4 40H22z" fill="#FFFFFF" stroke="#141414" stroke-width="3"/><path d="M20 30h24l-2 22H22z" fill="#7A4B2E"/><path d="M19.5 22h25l-.8 8H20.3z" fill="#F2F0ED"/><path d="M28 24c2-3 6-3 8 0" fill="none" stroke="#B3172C" stroke-width="2.5" stroke-linecap="round"/></svg>
+              <div class="tags"><span class="tag">Grande</span><span class="tag">Suave</span></div>
+              <h3>Latte de idiomas</h3>
+              <p class="notas">Cremoso y viajero. Atiende a la mesa de turistas <b>sin cambiar de cara</b>.</p>
+              <div class="precio"><span class="girar">Dar la vuelta ↻</span><span>Precio: un «merci»</span></div>
+            </div>
+            <div class="cara dorso">
+              <h3>Ingredientes</h3>
+              <div class="barras">
+                <div class="barra">Español · nativo<div><i style="width:100%"></i></div></div>
+                <div class="barra">Inglés · fluido<div><i style="width:92%"></i></div></div>
+                <div class="barra">Francés · fluido<div><i style="width:88%"></i></div></div>
+                <div class="barra">Italiano · un poco<div><i style="width:38%"></i></div></div>
+                <div class="barra">Ruso · aprendiendo desde cero<div><i style="width:8%"></i></div></div>
+              </div>
+              <span class="girar">Volver ↺</span>
+            </div>
+          </div>
+        </button>
+      </article>
+
+      <!-- 3 -->
+      <article class="bebida">
+        <button type="button" aria-expanded="false" aria-label="Cappuccino de habilidades. Toca para ver detalles">
+          <div class="giro">
+            <div class="cara frente">
+              <svg class="taza-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 24h36v12a16 16 0 0 1-16 16h-4a16 16 0 0 1-16-16z" fill="#FFFFFF" stroke="#141414" stroke-width="3"/><path d="M46 28h3a6 6 0 0 1 0 12h-4" fill="none" stroke="#141414" stroke-width="3"/><ellipse cx="28" cy="24" rx="18" ry="4" fill="#F2F0ED" stroke="#141414" stroke-width="2"/><circle cx="24" cy="23.5" r="1.4" fill="#5A3825"/><circle cx="30" cy="24.5" r="1.4" fill="#5A3825"/><circle cx="34" cy="23" r="1.4" fill="#5A3825"/></svg>
+              <div class="tags"><span class="tag">Espumoso</span><span class="tag">Equilibrado</span></div>
+              <h3>Cappuccino de habilidades</h3>
+              <p class="notas">Mitad rapidez, mitad detalle, con <b>espuma de trabajo en equipo</b>.</p>
+              <div class="precio"><span class="girar">Dar la vuelta ↻</span><span>Precio: un turno</span></div>
+            </div>
+            <div class="cara dorso">
+              <h3>Receta</h3>
+              <ul>
+                <li>Atención al cliente</li>
+                <li>Rapidez y eficiencia</li>
+                <li>Caja y TPV</li>
+                <li>Coctelería y nociones de sumillería</li>
+                <li>Gestión de inventario</li>
+                <li>Higiene y seguridad</li>
+                <li>Varios pedidos a la vez, bien organizados</li>
+                <li>Hora punta sin errores</li>
+                <li>Trabajo en equipo</li>
+                <li>Resolución de problemas</li>
+              </ul>
+              <span class="girar">Volver ↺</span>
+            </div>
+          </div>
+        </button>
+      </article>
+
+      <!-- 4 -->
+      <article class="bebida">
+        <button type="button" aria-expanded="false" aria-label="Infusión de valores. Toca para ver detalles">
+          <div class="giro">
+            <div class="cara frente">
+              <svg class="taza-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M12 26h34v10a14 14 0 0 1-14 14h-6a14 14 0 0 1-14-14z" fill="#FFFFFF" stroke="#141414" stroke-width="3"/><path d="M46 30h3a5 5 0 0 1 0 10h-4" fill="none" stroke="#141414" stroke-width="3"/><path d="M36 26V12" stroke="#141414" stroke-width="1.5"/><rect x="31" y="8" width="10" height="8" rx="1.5" fill="#B3172C"/><path d="M15 30h28v6a11 11 0 0 1-11 11h-6a11 11 0 0 1-11-11z" fill="#7A4B2E" opacity=".55"/></svg>
+              <div class="tags"><span class="tag">Relajante</span><span class="tag">De la casa</span></div>
+              <h3>Infusión de valores</h3>
+              <p class="notas">Muy <b>tranquila</b>, como el nombre de la casa. Calma, constancia y buen trato.</p>
+              <div class="precio"><span class="girar">Dar la vuelta ↻</span><span>Precio: una sonrisa</span></div>
+            </div>
+            <div class="cara dorso">
+              <h3>Infusiona</h3>
+              <ul>
+                <li><strong>Calma</strong> cuando hay cola y todo el mundo tiene prisa.</li>
+                <li><strong>Constancia</strong>: la barra igual de limpia a las 9 que a las 21.</li>
+                <li><strong>Buen trato</strong> con clientes y compañeros, siempre.</li>
+                <li>Practico meditación y me identifico con el estoicismo.</li>
+              </ul>
+              <span class="girar">Volver ↺</span>
+            </div>
+          </div>
+        </button>
+      </article>
+
+      <!-- 5 -->
+      <article class="bebida">
+        <button type="button" aria-expanded="false" aria-label="Cortado de ingeniería. Toca para ver detalles">
+          <div class="giro">
+            <div class="cara frente">
+              <svg class="taza-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 22h24l-3 28H23z" fill="#FFFFFF" stroke="#141414" stroke-width="3"/><path d="M21.6 34h20.8l-1.6 15H23.2z" fill="#141414"/><path d="M21 28h22l-.6 6H21.6z" fill="#F2F0ED"/><path d="M14 54h36" stroke="#B3172C" stroke-width="4" stroke-linecap="round"/></svg>
+              <div class="tags"><span class="tag">Corto</span><span class="tag">Preciso</span></div>
+              <h3>Cortado de ingeniería</h3>
+              <p class="notas">Un toque de <b>organización y procesos</b> para que la barra funcione como un reloj.</p>
+              <div class="precio"><span class="girar">Dar la vuelta ↻</span><span>Precio: 5 años</span></div>
+            </div>
+            <div class="cara dorso">
+              <h3>Origen</h3>
+              <div class="trabajo"><strong>Ingeniería Industrial</strong><small>Universidad Yacambú · 2016 – 2021</small>Me dejó cabeza para ordenar stock, tiempos y turnos, y para encontrar la forma más rápida de hacer bien las cosas.</div>
+              <span class="girar">Volver ↺</span>
+            </div>
+          </div>
+        </button>
+      </article>
+
+      <!-- 6 -->
+      <article class="bebida">
+        <button type="button" aria-expanded="false" aria-label="Bollería de la casa. Toca para ver detalles">
+          <div class="giro">
+            <div class="cara frente">
+              <svg class="taza-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40c2-14 14-22 24-22s22 8 24 22c-6 4-14 6-24 6S14 44 8 40z" fill="#7A4B2E" stroke="#141414" stroke-width="3"/><path d="M20 26l4 14M32 22v18M44 26l-4 14" stroke="#141414" stroke-width="2.5" stroke-linecap="round"/><rect x="6" y="50" width="52" height="4" rx="2" fill="#B3172C"/></svg>
+              <div class="tags"><span class="tag">Extra</span><span class="tag">Recién horneada</span></div>
+              <h3>Bollería de la casa</h3>
+              <p class="notas">Lo que acompaña al café: <b>energía, deporte y mundo</b>.</p>
+              <div class="precio"><span class="girar">Dar la vuelta ↻</span><span>Precio: invita la casa</span></div>
+            </div>
+            <div class="cara dorso">
+              <h3>En la bandeja</h3>
+              <ul>
+                <li><strong>Fundadora de Claw Active</strong>, ropa deportiva para yoga y calistenia.</li>
+                <li><strong>Voluntaria</strong> en Mega Misiones 2021, Venezuela.</li>
+                <li><strong>Exgimnasta</strong>; hoy calistenia y jiu-jitsu.</li>
+                <li><strong>Viajera</strong>: he vivido en 4 países.</li>
+              </ul>
+              <span class="girar">Volver ↺</span>
+            </div>
+          </div>
+        </button>
+      </article>
+    </div>
+  </section>
+
+  <section class="seccion" aria-labelledby="ruta-t">
+    <div class="seccion-head">
+      <h2 id="ruta-t">Origen del grano</h2>
+      <p>Como el buen café, con recorrido. Ahora tostándose en Alicante.</p>
+    </div>
+    <ol class="recorrido">
+      <li><div class="punto">VE</div><strong>Venezuela</strong><span>Origen e ingeniería</span></li>
+      <li><div class="punto">US</div><strong>EE. UU.</strong><span>Bartender en Exit 8</span></li>
+      <li><div class="punto">ES</div><strong>España</strong><span>Camarera en El Coyote</span></li>
+      <li><div class="punto">IE</div><strong>Irlanda</strong><span>Camarera en The Port House</span></li>
+    </ol>
+  </section>
+
+  <section class="pedido" id="pedido" aria-labelledby="pedido-t">
+    <div class="pedido-texto">
+      <h2 id="pedido-t">¿Para tomar <span style="color:var(--rojo)">aquí?</span></h2>
+      <p>Si os ha gustado la carta, el siguiente paso es fácil: escribidme y quedamos para una prueba o una entrevista. Referencias disponibles si las pedís.</p>
+      <div class="contacto">
+        <div class="dato"><span>WhatsApp</span><b id="tel">+34 689 278 768</b><button class="copiar" type="button" data-copy="+34689278768">Copiar</button></div>
+        <div class="dato"><span>Email</span><b id="mail">hereniasarabiaor@gmail.com</b><button class="copiar" type="button" data-copy="hereniasarabiaor@gmail.com">Copiar</button></div>
+        <div class="dato"><span>Dónde</span><b>Alicante, España</b></div>
+      </div>
+    </div>
+
+    <div class="ticket" role="group" aria-label="Ticket de pedido">
+      <div class="t-marca">TRANQUILO.</div>
+      <div class="t-sub">food spot · Av. del Catedrático Soler, 9 · Alicante<br>Factura simplificada · Candidatura</div>
+      <div class="meta"><span>Ticket nº 0037</span><span id="fecha">09/11/2026</span></div>
+      <div class="meta"><span>Mesa: Equipo Tranquilo</span><span>Atiende: Tina</span></div>
+      <hr>
+      <table>
+        <tr><td>1× Espresso de experiencia</td><td>3 bares</td></tr>
+        <tr><td>1× Latte de idiomas</td><td>3 + italiano</td></tr>
+        <tr><td>1× Cappuccino de habilidades</td><td>1 turno</td></tr>
+        <tr><td>1× Infusión de valores</td><td>1 sonrisa</td></tr>
+        <tr><td>1× Cortado de ingeniería</td><td>5 años</td></tr>
+        <tr><td>1× Bollería de la casa</td><td>invita</td></tr>
+        <tr><td colspan="2"><hr></td></tr>
+        <tr class="total"><td>TOTAL</td><td>1 entrevista</td></tr>
+        <tr><td>Propina</td><td>buen rollo</td></tr>
+      </table>
+      <hr>
+      <div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" shape-rendering="crispEdges" role="img" aria-label="Código QR del CV"><rect width="41" height="41" fill="#fff"/><path d="M4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM7,4h1v1h-1zM8,4h1v1h-1zM9,4h1v1h-1zM10,4h1v1h-1zM13,4h1v1h-1zM16,4h1v1h-1zM19,4h1v1h-1zM22,4h1v1h-1zM23,4h1v1h-1zM25,4h1v1h-1zM26,4h1v1h-1zM27,4h1v1h-1zM30,4h1v1h-1zM31,4h1v1h-1zM32,4h1v1h-1zM33,4h1v1h-1zM34,4h1v1h-1zM35,4h1v1h-1zM36,4h1v1h-1zM4,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM13,5h1v1h-1zM14,5h1v1h-1zM15,5h1v1h-1zM17,5h1v1h-1zM19,5h1v1h-1zM21,5h1v1h-1zM23,5h1v1h-1zM25,5h1v1h-1zM27,5h1v1h-1zM30,5h1v1h-1zM36,5h1v1h-1zM4,6h1v1h-1zM6,6h1v1h-1zM7,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM13,6h1v1h-1zM14,6h1v1h-1zM26,6h1v1h-1zM30,6h1v1h-1zM32,6h1v1h-1zM33,6h1v1h-1zM34,6h1v1h-1zM36,6h1v1h-1zM4,7h1v1h-1zM6,7h1v1h-1zM7,7h1v1h-1zM8,7h1v1h-1zM10,7h1v1h-1zM13,7h1v1h-1zM14,7h1v1h-1zM15,7h1v1h-1zM16,7h1v1h-1zM17,7h1v1h-1zM19,7h1v1h-1zM21,7h1v1h-1zM23,7h1v1h-1zM26,7h1v1h-1zM27,7h1v1h-1zM30,7h1v1h-1zM32,7h1v1h-1zM33,7h1v1h-1zM34,7h1v1h-1zM36,7h1v1h-1zM4,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM15,8h1v1h-1zM17,8h1v1h-1zM21,8h1v1h-1zM26,8h1v1h-1zM27,8h1v1h-1zM30,8h1v1h-1zM32,8h1v1h-1zM33,8h1v1h-1zM34,8h1v1h-1zM36,8h1v1h-1zM4,9h1v1h-1zM10,9h1v1h-1zM16,9h1v1h-1zM17,9h1v1h-1zM21,9h1v1h-1zM25,9h1v1h-1zM26,9h1v1h-1zM27,9h1v1h-1zM28,9h1v1h-1zM30,9h1v1h-1zM36,9h1v1h-1zM4,10h1v1h-1zM5,10h1v1h-1zM6,10h1v1h-1zM7,10h1v1h-1zM8,10h1v1h-1zM9,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM14,10h1v1h-1zM16,10h1v1h-1zM18,10h1v1h-1zM20,10h1v1h-1zM22,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM28,10h1v1h-1zM30,10h1v1h-1zM31,10h1v1h-1zM32,10h1v1h-1zM33,10h1v1h-1zM34,10h1v1h-1zM35,10h1v1h-1zM36,10h1v1h-1zM14,11h1v1h-1zM16,11h1v1h-1zM17,11h1v1h-1zM20,11h1v1h-1zM21,11h1v1h-1zM22,11h1v1h-1zM24,11h1v1h-1zM25,11h1v1h-1zM26,11h1v1h-1zM27,11h1v1h-1zM4,12h1v1h-1zM6,12h1v1h-1zM8,12h1v1h-1zM10,12h1v1h-1zM13,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM19,12h1v1h-1zM20,12h1v1h-1zM21,12h1v1h-1zM23,12h1v1h-1zM25,12h1v1h-1zM26,12h1v1h-1zM27,12h1v1h-1zM28,12h1v1h-1zM32,12h1v1h-1zM35,12h1v1h-1zM5,13h1v1h-1zM6,13h1v1h-1zM8,13h1v1h-1zM9,13h1v1h-1zM11,13h1v1h-1zM13,13h1v1h-1zM14,13h1v1h-1zM15,13h1v1h-1zM16,13h1v1h-1zM20,13h1v1h-1zM24,13h1v1h-1zM28,13h1v1h-1zM29,13h1v1h-1zM30,13h1v1h-1zM31,13h1v1h-1zM4,14h1v1h-1zM5,14h1v1h-1zM6,14h1v1h-1zM9,14h1v1h-1zM10,14h1v1h-1zM11,14h1v1h-1zM12,14h1v1h-1zM13,14h1v1h-1zM16,14h1v1h-1zM17,14h1v1h-1zM21,14h1v1h-1zM24,14h1v1h-1zM26,14h1v1h-1zM30,14h1v1h-1zM31,14h1v1h-1zM34,14h1v1h-1zM35,14h1v1h-1zM36,14h1v1h-1zM5,15h1v1h-1zM8,15h1v1h-1zM9,15h1v1h-1zM11,15h1v1h-1zM12,15h1v1h-1zM19,15h1v1h-1zM20,15h1v1h-1zM25,15h1v1h-1zM27,15h1v1h-1zM28,15h1v1h-1zM29,15h1v1h-1zM30,15h1v1h-1zM32,15h1v1h-1zM35,15h1v1h-1zM36,15h1v1h-1zM6,16h1v1h-1zM10,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM16,16h1v1h-1zM19,16h1v1h-1zM25,16h1v1h-1zM29,16h1v1h-1zM30,16h1v1h-1zM33,16h1v1h-1zM35,16h1v1h-1zM36,16h1v1h-1zM6,17h1v1h-1zM7,17h1v1h-1zM8,17h1v1h-1zM14,17h1v1h-1zM15,17h1v1h-1zM16,17h1v1h-1zM17,17h1v1h-1zM19,17h1v1h-1zM21,17h1v1h-1zM23,17h1v1h-1zM27,17h1v1h-1zM28,17h1v1h-1zM36,17h1v1h-1zM5,18h1v1h-1zM7,18h1v1h-1zM8,18h1v1h-1zM9,18h1v1h-1zM10,18h1v1h-1zM11,18h1v1h-1zM13,18h1v1h-1zM14,18h1v1h-1zM15,18h1v1h-1zM17,18h1v1h-1zM21,18h1v1h-1zM25,18h1v1h-1zM28,18h1v1h-1zM29,18h1v1h-1zM31,18h1v1h-1zM32,18h1v1h-1zM33,18h1v1h-1zM35,18h1v1h-1zM36,18h1v1h-1zM4,19h1v1h-1zM5,19h1v1h-1zM6,19h1v1h-1zM15,19h1v1h-1zM16,19h1v1h-1zM17,19h1v1h-1zM19,19h1v1h-1zM21,19h1v1h-1zM23,19h1v1h-1zM25,19h1v1h-1zM30,19h1v1h-1zM35,19h1v1h-1zM4,20h1v1h-1zM5,20h1v1h-1zM8,20h1v1h-1zM9,20h1v1h-1zM10,20h1v1h-1zM12,20h1v1h-1zM13,20h1v1h-1zM14,20h1v1h-1zM15,20h1v1h-1zM16,20h1v1h-1zM18,20h1v1h-1zM20,20h1v1h-1zM21,20h1v1h-1zM25,20h1v1h-1zM27,20h1v1h-1zM29,20h1v1h-1zM30,20h1v1h-1zM33,20h1v1h-1zM34,20h1v1h-1zM4,21h1v1h-1zM6,21h1v1h-1zM9,21h1v1h-1zM11,21h1v1h-1zM13,21h1v1h-1zM14,21h1v1h-1zM15,21h1v1h-1zM16,21h1v1h-1zM18,21h1v1h-1zM19,21h1v1h-1zM20,21h1v1h-1zM21,21h1v1h-1zM24,21h1v1h-1zM25,21h1v1h-1zM28,21h1v1h-1zM29,21h1v1h-1zM30,21h1v1h-1zM31,21h1v1h-1zM5,22h1v1h-1zM6,22h1v1h-1zM7,22h1v1h-1zM9,22h1v1h-1zM10,22h1v1h-1zM12,22h1v1h-1zM15,22h1v1h-1zM17,22h1v1h-1zM22,22h1v1h-1zM29,22h1v1h-1zM30,22h1v1h-1zM34,22h1v1h-1zM35,22h1v1h-1zM36,22h1v1h-1zM4,23h1v1h-1zM9,23h1v1h-1zM12,23h1v1h-1zM13,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM17,23h1v1h-1zM20,23h1v1h-1zM21,23h1v1h-1zM22,23h1v1h-1zM23,23h1v1h-1zM25,23h1v1h-1zM26,23h1v1h-1zM27,23h1v1h-1zM29,23h1v1h-1zM31,23h1v1h-1zM32,23h1v1h-1zM7,24h1v1h-1zM8,24h1v1h-1zM10,24h1v1h-1zM13,24h1v1h-1zM14,24h1v1h-1zM16,24h1v1h-1zM17,24h1v1h-1zM18,24h1v1h-1zM19,24h1v1h-1zM20,24h1v1h-1zM22,24h1v1h-1zM24,24h1v1h-1zM30,24h1v1h-1zM31,24h1v1h-1zM32,24h1v1h-1zM33,24h1v1h-1zM7,25h1v1h-1zM8,25h1v1h-1zM11,25h1v1h-1zM14,25h1v1h-1zM19,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM23,25h1v1h-1zM24,25h1v1h-1zM25,25h1v1h-1zM26,25h1v1h-1zM27,25h1v1h-1zM28,25h1v1h-1zM30,25h1v1h-1zM33,25h1v1h-1zM35,25h1v1h-1zM36,25h1v1h-1zM4,26h1v1h-1zM6,26h1v1h-1zM8,26h1v1h-1zM10,26h1v1h-1zM17,26h1v1h-1zM18,26h1v1h-1zM19,26h1v1h-1zM20,26h1v1h-1zM22,26h1v1h-1zM23,26h1v1h-1zM24,26h1v1h-1zM26,26h1v1h-1zM28,26h1v1h-1zM30,26h1v1h-1zM34,26h1v1h-1zM35,26h1v1h-1zM36,26h1v1h-1zM5,27h1v1h-1zM7,27h1v1h-1zM8,27h1v1h-1zM9,27h1v1h-1zM11,27h1v1h-1zM12,27h1v1h-1zM13,27h1v1h-1zM15,27h1v1h-1zM16,27h1v1h-1zM20,27h1v1h-1zM21,27h1v1h-1zM22,27h1v1h-1zM24,27h1v1h-1zM25,27h1v1h-1zM26,27h1v1h-1zM30,27h1v1h-1zM4,28h1v1h-1zM6,28h1v1h-1zM8,28h1v1h-1zM10,28h1v1h-1zM11,28h1v1h-1zM12,28h1v1h-1zM13,28h1v1h-1zM15,28h1v1h-1zM17,28h1v1h-1zM19,28h1v1h-1zM20,28h1v1h-1zM21,28h1v1h-1zM23,28h1v1h-1zM24,28h1v1h-1zM25,28h1v1h-1zM27,28h1v1h-1zM28,28h1v1h-1zM29,28h1v1h-1zM30,28h1v1h-1zM31,28h1v1h-1zM32,28h1v1h-1zM36,28h1v1h-1zM12,29h1v1h-1zM13,29h1v1h-1zM14,29h1v1h-1zM15,29h1v1h-1zM16,29h1v1h-1zM17,29h1v1h-1zM24,29h1v1h-1zM25,29h1v1h-1zM27,29h1v1h-1zM28,29h1v1h-1zM32,29h1v1h-1zM33,29h1v1h-1zM36,29h1v1h-1zM4,30h1v1h-1zM5,30h1v1h-1zM6,30h1v1h-1zM7,30h1v1h-1zM8,30h1v1h-1zM9,30h1v1h-1zM10,30h1v1h-1zM14,30h1v1h-1zM16,30h1v1h-1zM20,30h1v1h-1zM21,30h1v1h-1zM26,30h1v1h-1zM27,30h1v1h-1zM28,30h1v1h-1zM30,30h1v1h-1zM32,30h1v1h-1zM34,30h1v1h-1zM35,30h1v1h-1zM36,30h1v1h-1zM4,31h1v1h-1zM10,31h1v1h-1zM13,31h1v1h-1zM15,31h1v1h-1zM19,31h1v1h-1zM20,31h1v1h-1zM24,31h1v1h-1zM25,31h1v1h-1zM26,31h1v1h-1zM28,31h1v1h-1zM32,31h1v1h-1zM35,31h1v1h-1zM36,31h1v1h-1zM4,32h1v1h-1zM6,32h1v1h-1zM7,32h1v1h-1zM8,32h1v1h-1zM10,32h1v1h-1zM12,32h1v1h-1zM13,32h1v1h-1zM14,32h1v1h-1zM16,32h1v1h-1zM18,32h1v1h-1zM23,32h1v1h-1zM24,32h1v1h-1zM28,32h1v1h-1zM29,32h1v1h-1zM30,32h1v1h-1zM31,32h1v1h-1zM32,32h1v1h-1zM33,32h1v1h-1zM35,32h1v1h-1zM36,32h1v1h-1zM4,33h1v1h-1zM6,33h1v1h-1zM7,33h1v1h-1zM8,33h1v1h-1zM10,33h1v1h-1zM13,33h1v1h-1zM14,33h1v1h-1zM16,33h1v1h-1zM17,33h1v1h-1zM19,33h1v1h-1zM21,33h1v1h-1zM23,33h1v1h-1zM27,33h1v1h-1zM32,33h1v1h-1zM36,33h1v1h-1zM4,34h1v1h-1zM6,34h1v1h-1zM7,34h1v1h-1zM8,34h1v1h-1zM10,34h1v1h-1zM12,34h1v1h-1zM13,34h1v1h-1zM14,34h1v1h-1zM17,34h1v1h-1zM21,34h1v1h-1zM22,34h1v1h-1zM24,34h1v1h-1zM26,34h1v1h-1zM27,34h1v1h-1zM32,34h1v1h-1zM33,34h1v1h-1zM36,34h1v1h-1zM4,35h1v1h-1zM10,35h1v1h-1zM13,35h1v1h-1zM14,35h1v1h-1zM15,35h1v1h-1zM19,35h1v1h-1zM21,35h1v1h-1zM22,35h1v1h-1zM23,35h1v1h-1zM24,35h1v1h-1zM25,35h1v1h-1zM26,35h1v1h-1zM27,35h1v1h-1zM28,35h1v1h-1zM29,35h1v1h-1zM32,35h1v1h-1zM35,35h1v1h-1zM4,36h1v1h-1zM5,36h1v1h-1zM6,36h1v1h-1zM7,36h1v1h-1zM8,36h1v1h-1zM9,36h1v1h-1zM10,36h1v1h-1zM12,36h1v1h-1zM13,36h1v1h-1zM16,36h1v1h-1zM18,36h1v1h-1zM21,36h1v1h-1zM23,36h1v1h-1zM24,36h1v1h-1zM25,36h1v1h-1zM26,36h1v1h-1zM27,36h1v1h-1zM28,36h1v1h-1zM29,36h1v1h-1zM32,36h1v1h-1zM33,36h1v1h-1zM34,36h1v1h-1zM35,36h1v1h-1zM36,36h1v1h-1z" fill="#141414"/></svg></div>
+      <div class="escanea">Escanea y vuelve a ver la carta</div>
+      <div class="url">claude.ai/artifact/MdxfyVWPgVUbT3jZYhheQL</div>
+      <a class="btn rojo" id="contratar" href="https://wa.me/34689278768?text=%C2%A1Hola%20Tina!%20Hemos%20visto%20tu%20CV%20en%20Tranquilo%20y%20nos%20gustar%C3%ADa%20conocerte%20%E2%98%95" target="_blank" rel="noopener">Contratar a Tina ☕</a>
+      <div class="gracias">*** GRACIAS POR SU VISITA ***</div>
+      <div class="cod-barras" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <footer>Herenia «Tina» Sarabia · CV preparado con cariño para Tranquilo</footer>
+</div>
+
+<aside class="barista" aria-label="Tu café se prepara mientras lees">
+  <canvas id="barista-cv" role="img" aria-label="Una barista prepara un latte mientras bajas por la página"></canvas>
+  <div class="pie">
+    <div class="paso"><span id="paso-txt">Moliendo café</span><small><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span><span id="paso-num">1/6</span></small></div>
+    <button id="barista-toggle" type="button" aria-expanded="true">Ocultar</button>
+  </div>
+</aside>
+
+<div class="print-card">
+  <div class="pm">TRANQUILO. · Candidatura</div>
+  <h1>Herenia «Tina» Sarabia</h1>
+  <p>Camarera · Bartender · +5 años en hostelería</p>
+  <p class="lista">Cafés, cócteles y vinos · Caja y TPV · Atención al cliente<br>Español, inglés, francés y algo de italiano · 4 países</p>
+  <div class="qrp"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" shape-rendering="crispEdges" role="img" aria-label="Código QR del CV"><rect width="41" height="41" fill="#fff"/><path d="M4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM7,4h1v1h-1zM8,4h1v1h-1zM9,4h1v1h-1zM10,4h1v1h-1zM13,4h1v1h-1zM16,4h1v1h-1zM19,4h1v1h-1zM22,4h1v1h-1zM23,4h1v1h-1zM25,4h1v1h-1zM26,4h1v1h-1zM27,4h1v1h-1zM30,4h1v1h-1zM31,4h1v1h-1zM32,4h1v1h-1zM33,4h1v1h-1zM34,4h1v1h-1zM35,4h1v1h-1zM36,4h1v1h-1zM4,5h1v1h-1zM10,5h1v1h-1zM12,5h1v1h-1zM13,5h1v1h-1zM14,5h1v1h-1zM15,5h1v1h-1zM17,5h1v1h-1zM19,5h1v1h-1zM21,5h1v1h-1zM23,5h1v1h-1zM25,5h1v1h-1zM27,5h1v1h-1zM30,5h1v1h-1zM36,5h1v1h-1zM4,6h1v1h-1zM6,6h1v1h-1zM7,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM13,6h1v1h-1zM14,6h1v1h-1zM26,6h1v1h-1zM30,6h1v1h-1zM32,6h1v1h-1zM33,6h1v1h-1zM34,6h1v1h-1zM36,6h1v1h-1zM4,7h1v1h-1zM6,7h1v1h-1zM7,7h1v1h-1zM8,7h1v1h-1zM10,7h1v1h-1zM13,7h1v1h-1zM14,7h1v1h-1zM15,7h1v1h-1zM16,7h1v1h-1zM17,7h1v1h-1zM19,7h1v1h-1zM21,7h1v1h-1zM23,7h1v1h-1zM26,7h1v1h-1zM27,7h1v1h-1zM30,7h1v1h-1zM32,7h1v1h-1zM33,7h1v1h-1zM34,7h1v1h-1zM36,7h1v1h-1zM4,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM15,8h1v1h-1zM17,8h1v1h-1zM21,8h1v1h-1zM26,8h1v1h-1zM27,8h1v1h-1zM30,8h1v1h-1zM32,8h1v1h-1zM33,8h1v1h-1zM34,8h1v1h-1zM36,8h1v1h-1zM4,9h1v1h-1zM10,9h1v1h-1zM16,9h1v1h-1zM17,9h1v1h-1zM21,9h1v1h-1zM25,9h1v1h-1zM26,9h1v1h-1zM27,9h1v1h-1zM28,9h1v1h-1zM30,9h1v1h-1zM36,9h1v1h-1zM4,10h1v1h-1zM5,10h1v1h-1zM6,10h1v1h-1zM7,10h1v1h-1zM8,10h1v1h-1zM9,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM14,10h1v1h-1zM16,10h1v1h-1zM18,10h1v1h-1zM20,10h1v1h-1zM22,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM28,10h1v1h-1zM30,10h1v1h-1zM31,10h1v1h-1zM32,10h1v1h-1zM33,10h1v1h-1zM34,10h1v1h-1zM35,10h1v1h-1zM36,10h1v1h-1zM14,11h1v1h-1zM16,11h1v1h-1zM17,11h1v1h-1zM20,11h1v1h-1zM21,11h1v1h-1zM22,11h1v1h-1zM24,11h1v1h-1zM25,11h1v1h-1zM26,11h1v1h-1zM27,11h1v1h-1zM4,12h1v1h-1zM6,12h1v1h-1zM8,12h1v1h-1zM10,12h1v1h-1zM13,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM19,12h1v1h-1zM20,12h1v1h-1zM21,12h1v1h-1zM23,12h1v1h-1zM25,12h1v1h-1zM26,12h1v1h-1zM27,12h1v1h-1zM28,12h1v1h-1zM32,12h1v1h-1zM35,12h1v1h-1zM5,13h1v1h-1zM6,13h1v1h-1zM8,13h1v1h-1zM9,13h1v1h-1zM11,13h1v1h-1zM13,13h1v1h-1zM14,13h1v1h-1zM15,13h1v1h-1zM16,13h1v1h-1zM20,13h1v1h-1zM24,13h1v1h-1zM28,13h1v1h-1zM29,13h1v1h-1zM30,13h1v1h-1zM31,13h1v1h-1zM4,14h1v1h-1zM5,14h1v1h-1zM6,14h1v1h-1zM9,14h1v1h-1zM10,14h1v1h-1zM11,14h1v1h-1zM12,14h1v1h-1zM13,14h1v1h-1zM16,14h1v1h-1zM17,14h1v1h-1zM21,14h1v1h-1zM24,14h1v1h-1zM26,14h1v1h-1zM30,14h1v1h-1zM31,14h1v1h-1zM34,14h1v1h-1zM35,14h1v1h-1zM36,14h1v1h-1zM5,15h1v1h-1zM8,15h1v1h-1zM9,15h1v1h-1zM11,15h1v1h-1zM12,15h1v1h-1zM19,15h1v1h-1zM20,15h1v1h-1zM25,15h1v1h-1zM27,15h1v1h-1zM28,15h1v1h-1zM29,15h1v1h-1zM30,15h1v1h-1zM32,15h1v1h-1zM35,15h1v1h-1zM36,15h1v1h-1zM6,16h1v1h-1zM10,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM16,16h1v1h-1zM19,16h1v1h-1zM25,16h1v1h-1zM29,16h1v1h-1zM30,16h1v1h-1zM33,16h1v1h-1zM35,16h1v1h-1zM36,16h1v1h-1zM6,17h1v1h-1zM7,17h1v1h-1zM8,17h1v1h-1zM14,17h1v1h-1zM15,17h1v1h-1zM16,17h1v1h-1zM17,17h1v1h-1zM19,17h1v1h-1zM21,17h1v1h-1zM23,17h1v1h-1zM27,17h1v1h-1zM28,17h1v1h-1zM36,17h1v1h-1zM5,18h1v1h-1zM7,18h1v1h-1zM8,18h1v1h-1zM9,18h1v1h-1zM10,18h1v1h-1zM11,18h1v1h-1zM13,18h1v1h-1zM14,18h1v1h-1zM15,18h1v1h-1zM17,18h1v1h-1zM21,18h1v1h-1zM25,18h1v1h-1zM28,18h1v1h-1zM29,18h1v1h-1zM31,18h1v1h-1zM32,18h1v1h-1zM33,18h1v1h-1zM35,18h1v1h-1zM36,18h1v1h-1zM4,19h1v1h-1zM5,19h1v1h-1zM6,19h1v1h-1zM15,19h1v1h-1zM16,19h1v1h-1zM17,19h1v1h-1zM19,19h1v1h-1zM21,19h1v1h-1zM23,19h1v1h-1zM25,19h1v1h-1zM30,19h1v1h-1zM35,19h1v1h-1zM4,20h1v1h-1zM5,20h1v1h-1zM8,20h1v1h-1zM9,20h1v1h-1zM10,20h1v1h-1zM12,20h1v1h-1zM13,20h1v1h-1zM14,20h1v1h-1zM15,20h1v1h-1zM16,20h1v1h-1zM18,20h1v1h-1zM20,20h1v1h-1zM21,20h1v1h-1zM25,20h1v1h-1zM27,20h1v1h-1zM29,20h1v1h-1zM30,20h1v1h-1zM33,20h1v1h-1zM34,20h1v1h-1zM4,21h1v1h-1zM6,21h1v1h-1zM9,21h1v1h-1zM11,21h1v1h-1zM13,21h1v1h-1zM14,21h1v1h-1zM15,21h1v1h-1zM16,21h1v1h-1zM18,21h1v1h-1zM19,21h1v1h-1zM20,21h1v1h-1zM21,21h1v1h-1zM24,21h1v1h-1zM25,21h1v1h-1zM28,21h1v1h-1zM29,21h1v1h-1zM30,21h1v1h-1zM31,21h1v1h-1zM5,22h1v1h-1zM6,22h1v1h-1zM7,22h1v1h-1zM9,22h1v1h-1zM10,22h1v1h-1zM12,22h1v1h-1zM15,22h1v1h-1zM17,22h1v1h-1zM22,22h1v1h-1zM29,22h1v1h-1zM30,22h1v1h-1zM34,22h1v1h-1zM35,22h1v1h-1zM36,22h1v1h-1zM4,23h1v1h-1zM9,23h1v1h-1zM12,23h1v1h-1zM13,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM17,23h1v1h-1zM20,23h1v1h-1zM21,23h1v1h-1zM22,23h1v1h-1zM23,23h1v1h-1zM25,23h1v1h-1zM26,23h1v1h-1zM27,23h1v1h-1zM29,23h1v1h-1zM31,23h1v1h-1zM32,23h1v1h-1zM7,24h1v1h-1zM8,24h1v1h-1zM10,24h1v1h-1zM13,24h1v1h-1zM14,24h1v1h-1zM16,24h1v1h-1zM17,24h1v1h-1zM18,24h1v1h-1zM19,24h1v1h-1zM20,24h1v1h-1zM22,24h1v1h-1zM24,24h1v1h-1zM30,24h1v1h-1zM31,24h1v1h-1zM32,24h1v1h-1zM33,24h1v1h-1zM7,25h1v1h-1zM8,25h1v1h-1zM11,25h1v1h-1zM14,25h1v1h-1zM19,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM23,25h1v1h-1zM24,25h1v1h-1zM25,25h1v1h-1zM26,25h1v1h-1zM27,25h1v1h-1zM28,25h1v1h-1zM30,25h1v1h-1zM33,25h1v1h-1zM35,25h1v1h-1zM36,25h1v1h-1zM4,26h1v1h-1zM6,26h1v1h-1zM8,26h1v1h-1zM10,26h1v1h-1zM17,26h1v1h-1zM18,26h1v1h-1zM19,26h1v1h-1zM20,26h1v1h-1zM22,26h1v1h-1zM23,26h1v1h-1zM24,26h1v1h-1zM26,26h1v1h-1zM28,26h1v1h-1zM30,26h1v1h-1zM34,26h1v1h-1zM35,26h1v1h-1zM36,26h1v1h-1zM5,27h1v1h-1zM7,27h1v1h-1zM8,27h1v1h-1zM9,27h1v1h-1zM11,27h1v1h-1zM12,27h1v1h-1zM13,27h1v1h-1zM15,27h1v1h-1zM16,27h1v1h-1zM20,27h1v1h-1zM21,27h1v1h-1zM22,27h1v1h-1zM24,27h1v1h-1zM25,27h1v1h-1zM26,27h1v1h-1zM30,27h1v1h-1zM4,28h1v1h-1zM6,28h1v1h-1zM8,28h1v1h-1zM10,28h1v1h-1zM11,28h1v1h-1zM12,28h1v1h-1zM13,28h1v1h-1zM15,28h1v1h-1zM17,28h1v1h-1zM19,28h1v1h-1zM20,28h1v1h-1zM21,28h1v1h-1zM23,28h1v1h-1zM24,28h1v1h-1zM25,28h1v1h-1zM27,28h1v1h-1zM28,28h1v1h-1zM29,28h1v1h-1zM30,28h1v1h-1zM31,28h1v1h-1zM32,28h1v1h-1zM36,28h1v1h-1zM12,29h1v1h-1zM13,29h1v1h-1zM14,29h1v1h-1zM15,29h1v1h-1zM16,29h1v1h-1zM17,29h1v1h-1zM24,29h1v1h-1zM25,29h1v1h-1zM27,29h1v1h-1zM28,29h1v1h-1zM32,29h1v1h-1zM33,29h1v1h-1zM36,29h1v1h-1zM4,30h1v1h-1zM5,30h1v1h-1zM6,30h1v1h-1zM7,30h1v1h-1zM8,30h1v1h-1zM9,30h1v1h-1zM10,30h1v1h-1zM14,30h1v1h-1zM16,30h1v1h-1zM20,30h1v1h-1zM21,30h1v1h-1zM26,30h1v1h-1zM27,30h1v1h-1zM28,30h1v1h-1zM30,30h1v1h-1zM32,30h1v1h-1zM34,30h1v1h-1zM35,30h1v1h-1zM36,30h1v1h-1zM4,31h1v1h-1zM10,31h1v1h-1zM13,31h1v1h-1zM15,31h1v1h-1zM19,31h1v1h-1zM20,31h1v1h-1zM24,31h1v1h-1zM25,31h1v1h-1zM26,31h1v1h-1zM28,31h1v1h-1zM32,31h1v1h-1zM35,31h1v1h-1zM36,31h1v1h-1zM4,32h1v1h-1zM6,32h1v1h-1zM7,32h1v1h-1zM8,32h1v1h-1zM10,32h1v1h-1zM12,32h1v1h-1zM13,32h1v1h-1zM14,32h1v1h-1zM16,32h1v1h-1zM18,32h1v1h-1zM23,32h1v1h-1zM24,32h1v1h-1zM28,32h1v1h-1zM29,32h1v1h-1zM30,32h1v1h-1zM31,32h1v1h-1zM32,32h1v1h-1zM33,32h1v1h-1zM35,32h1v1h-1zM36,32h1v1h-1zM4,33h1v1h-1zM6,33h1v1h-1zM7,33h1v1h-1zM8,33h1v1h-1zM10,33h1v1h-1zM13,33h1v1h-1zM14,33h1v1h-1zM16,33h1v1h-1zM17,33h1v1h-1zM19,33h1v1h-1zM21,33h1v1h-1zM23,33h1v1h-1zM27,33h1v1h-1zM32,33h1v1h-1zM36,33h1v1h-1zM4,34h1v1h-1zM6,34h1v1h-1zM7,34h1v1h-1zM8,34h1v1h-1zM10,34h1v1h-1zM12,34h1v1h-1zM13,34h1v1h-1zM14,34h1v1h-1zM17,34h1v1h-1zM21,34h1v1h-1zM22,34h1v1h-1zM24,34h1v1h-1zM26,34h1v1h-1zM27,34h1v1h-1zM32,34h1v1h-1zM33,34h1v1h-1zM36,34h1v1h-1zM4,35h1v1h-1zM10,35h1v1h-1zM13,35h1v1h-1zM14,35h1v1h-1zM15,35h1v1h-1zM19,35h1v1h-1zM21,35h1v1h-1zM22,35h1v1h-1zM23,35h1v1h-1zM24,35h1v1h-1zM25,35h1v1h-1zM26,35h1v1h-1zM27,35h1v1h-1zM28,35h1v1h-1zM29,35h1v1h-1zM32,35h1v1h-1zM35,35h1v1h-1zM4,36h1v1h-1zM5,36h1v1h-1zM6,36h1v1h-1zM7,36h1v1h-1zM8,36h1v1h-1zM9,36h1v1h-1zM10,36h1v1h-1zM12,36h1v1h-1zM13,36h1v1h-1zM16,36h1v1h-1zM18,36h1v1h-1zM21,36h1v1h-1zM23,36h1v1h-1zM24,36h1v1h-1zM25,36h1v1h-1zM26,36h1v1h-1zM27,36h1v1h-1zM28,36h1v1h-1zM29,36h1v1h-1zM32,36h1v1h-1zM33,36h1v1h-1zM34,36h1v1h-1zM35,36h1v1h-1zM36,36h1v1h-1z" fill="#141414"/></svg></div>
+  <p><strong>Escanea para ver mi carta interactiva</strong></p>
+  <p class="cont">+34 689 278 768 · hereniasarabiaor@gmail.com · Alicante</p>
+</div>
+
+<script>
+(function () {
+  // Tarjetas que se giran
+  document.querySelectorAll('.bebida button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var card = b.closest('.bebida');
+      var on = card.classList.toggle('girada');
+      b.setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+  });
+
+  // Barista: escena que avanza con el scroll (vista desde detrás de la barra)
+  var cv = document.getElementById('barista-cv');
+  var ctx = cv.getContext('2d');
+  var caja = document.querySelector('.barista');
+  var txtPaso = document.getElementById('paso-txt');
+  var numPaso = document.getElementById('paso-num');
+  var dots = document.querySelectorAll('.barista .dots i');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W = 240, H = 180;
+  var C = { ink: '#141414', red: '#B3172C', steel: '#A7A9AC', steelD: '#6F7175', coffee: '#3B2214', crema: '#A86B3C', latte: '#C99A70', milk: '#FFF9F0', skin: '#E2AE87', skinD: '#C98F68', counter: '#E8E4DF', wall: '#F7F6F4', bean: '#5A3825' };
+  var PASOS = [
+    { fin: .15, t: 'Moliendo café' },
+    { fin: .29, t: 'Al portafiltro' },
+    { fin: .45, t: 'Extrayendo espresso' },
+    { fin: .60, t: 'Leche al vapor' },
+    { fin: .82, t: 'Latte art' },
+    { fin: 1.01, t: 'Servido en barra' }
+  ];
+  var progreso = 0;
+
+  function ajustar() {
+    var r = cv.getBoundingClientRect();
+    var d = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.max(1, Math.round(r.width * d));
+    cv.height = Math.max(1, Math.round(r.height * d));
+  }
+  function lerp(a, b, k) { return a + (b - a) * k; }
+  function ease(k) { k = Math.max(0, Math.min(1, k)); return k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
+  function rr(x, y, w, h, r, fill, stroke, lw) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 2; ctx.stroke(); }
+  }
+  function linea(x1, y1, x2, y2, col, lw) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.stroke(); }
+  function circ(x, y, r, fill, stroke, lw) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); if (fill) { ctx.fillStyle = fill; ctx.fill(); } if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 2; ctx.stroke(); } }
+  // Brazo de la barista: entra desde el borde (manga negra, mano)
+  function brazo(x0, y0, x1, y1) {
+    var mx = lerp(x0, x1, .55), my = lerp(y0, y1, .55);
+    linea(x0, y0, mx, my, C.ink, 18);
+    linea(mx, my, x1, y1, C.skin, 12);
+    circ(x1, y1, 8, C.skin, C.skinD, 1.5);
+  }
+  function fondo() {
+    ctx.fillStyle = C.wall; ctx.fillRect(0, 0, W, H);
+    // azulejos sutiles
+    ctx.strokeStyle = 'rgba(20,20,20,.05)'; ctx.lineWidth = 1;
+    for (var y = 12; y < 136; y += 14) { linea(0, y, W, y, 'rgba(20,20,20,.05)', 1); }
+    ctx.fillStyle = C.counter; ctx.fillRect(0, 136, W, 44);
+    linea(0, 136, W, 136, C.ink, 2);
+  }
+  function maquina() {
+    rr(122, 16, 108, 98, 4, C.ink);
+    ctx.fillStyle = C.red; ctx.font = '900 10px Archivo, Arial, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('TRANQUILO.', 176, 34);
+    circ(142, 50, 7, '#fff', C.steel, 2); linea(142, 50, 146, 46, C.red, 1.5);
+    rr(156, 56, 30, 12, 2, C.steelD);        // grupo
+    rr(200, 50, 12, 6, 2, C.steelD);          // botón vapor
+    linea(214, 58, 214, 108, C.steel, 3);     // lanceta
+    rr(130, 114, 92, 6, 1, '#3a3a3a');        // pies
+    rr(132, 126, 88, 10, 2, '#4a4a4a');       // bandeja
+    for (var x = 138; x < 216; x += 8) linea(x, 128, x, 134, '#2a2a2a', 1.5);
+  }
+  function molinillo(dx) {
+    ctx.save(); ctx.translate(dx, 0);
+    ctx.beginPath(); ctx.moveTo(22, 12); ctx.lineTo(74, 12); ctx.lineTo(62, 42); ctx.lineTo(34, 42); ctx.closePath();
+    ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fill(); ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.stroke();
+    var granos = [[34,30],[42,34],[50,30],[58,34],[46,24],[38,22],[56,24],[62,28],[30,18],[66,20],[48,18]];
+    granos.forEach(function (g) { ctx.beginPath(); ctx.ellipse(g[0], g[1], 3.4, 2.4, .5, 0, Math.PI * 2); ctx.fillStyle = C.bean; ctx.fill(); });
+    rr(32, 42, 32, 50, 3, C.ink);
+    circ(48, 60, 4, C.red);
+    rr(44, 92, 8, 6, 1, C.steelD);
+    rr(36, 116, 24, 4, 1, C.steelD);          // horquilla
+    rr(28, 120, 40, 16, 2, C.ink);
+    ctx.restore();
+  }
+  function portafiltro(x, y, carga) {
+    linea(x - 14, y + 5, x - 40, y + 12, C.ink, 7);
+    rr(x - 15, y, 30, 10, 3, C.steelD);
+    if (carga > 0) {
+      ctx.beginPath(); ctx.ellipse(x, y + 1, 12, 3 + 3 * carga, 0, Math.PI, 0); ctx.fillStyle = C.coffee; ctx.fill();
+    }
+  }
+  function tazaLado(cx, base, nivel, top) {
+    ctx.beginPath(); ctx.ellipse(cx, base + 2, 24, 4, 0, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx + 15, base - 12, 6, -Math.PI / 2, Math.PI / 2); ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - 16, base - 24); ctx.lineTo(cx + 16, base - 24); ctx.lineTo(cx + 12, base); ctx.lineTo(cx - 12, base); ctx.closePath();
+    ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.stroke();
+    if (top) {
+      ctx.beginPath(); ctx.ellipse(cx, base - 24, 16, 4, 0, 0, Math.PI * 2); ctx.fillStyle = top; ctx.fill(); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5; ctx.stroke();
+    } else if (nivel > 0) {
+      var y = base - 24 * nivel;
+      ctx.save(); ctx.beginPath(); ctx.moveTo(cx - 16, base - 24); ctx.lineTo(cx + 16, base - 24); ctx.lineTo(cx + 12, base); ctx.lineTo(cx - 12, base); ctx.closePath(); ctx.clip();
+      ctx.fillStyle = C.coffee; ctx.fillRect(cx - 20, y, 40, base - y);
+      ctx.fillStyle = C.crema; ctx.fillRect(cx - 20, y, 40, 2.5);
+      ctx.restore();
+    }
+  }
+  function corazon(cx, cy, s, col) {
+    ctx.beginPath(); ctx.moveTo(cx, cy + s * .9);
+    ctx.bezierCurveTo(cx - s * 1.5, cy + s * .05, cx - s * .95, cy - s * 1.05, cx, cy - s * .35);
+    ctx.bezierCurveTo(cx + s * .95, cy - s * 1.05, cx + s * 1.5, cy + s * .05, cx, cy + s * .9);
+    ctx.fillStyle = col; ctx.fill();
+  }
+  function vapor(x, y, t, n) {
+    for (var i = 0; i < n; i++) {
+      var k = ((t * .6 + i / n) % 1);
+      ctx.globalAlpha = .55 * (1 - k);
+      circ(x + Math.sin(t * 3 + i) * 4, y - k * 34, 4 + k * 7, '#fff', 'rgba(20,20,20,.15)', 1);
+    }
+    ctx.globalAlpha = 1;
+  }
+  function bocadillo(x, y, txt) {
+    ctx.font = '900 11px Archivo, Arial, sans-serif'; ctx.textAlign = 'center';
+    var w = ctx.measureText(txt).width + 14;
+    rr(x - w / 2, y - 12, w, 18, 0, C.red);
+    ctx.fillStyle = '#fff'; ctx.fillText(txt, x, y + 1);
+  }
+
+  function dibujar(p, t) {
+    ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+    var i = 0; while (i < PASOS.length - 1 && p >= PASOS[i].fin) i++;
+    var ini = i === 0 ? 0 : PASOS[i - 1].fin;
+    var q = Math.max(0, Math.min(1, (p - ini) / (Math.min(1, PASOS[i].fin) - ini)));
+    var anim = reduce ? 0 : t;
+
+    if (i === 0) { // moliendo
+      fondo(); maquina();
+      var sh = reduce ? 0 : Math.sin(t * 70) * .7;
+      molinillo(sh);
+      portafiltro(48, 104, q);
+      if (!reduce) for (var g = 0; g < 7; g++) { var k = ((t * 2.2 + g / 7) % 1); circ(46 + (g % 3) * 2, 98 + k * 6, 1.1, C.coffee); }
+      brazo(0, 180, 10, 116);
+      tazaLado(176, 126, 0);
+      bocadillo(48, 160, 'BRRRR');
+    } else if (i === 1) { // portafiltro a la máquina
+      fondo(); maquina(); molinillo(0);
+      var e = ease(q);
+      var x = lerp(48, 171, e), y = lerp(104, 68, e) - Math.sin(Math.PI * e) * 22;
+      if (q < .3) { var tq = q / .3; linea(lerp(40, 60, tq), 112, lerp(56, 36, tq), 112, C.steel, 2); } // nivelando
+      portafiltro(x, y, 1);
+      brazo(lerp(0, 60, e), 180, x - 40, y + 12);
+      tazaLado(176, 126, 0);
+      if (q > .85) bocadillo(120, 160, 'CLAC');
+    } else if (i === 2) { // extracción
+      fondo(); maquina(); molinillo(0);
+      portafiltro(171, 68, 1);
+      var nivel = ease(q) * .75;
+      if (q < .96) {
+        var wob = Math.sin(anim * 9) * .6;
+        linea(167, 79, 167 + wob, 126 - 24 * nivel, C.coffee, 2);
+        linea(175, 79, 175 - wob, 126 - 24 * nivel, C.coffee, 2);
+        rr(163, 76, 16, 4, 1, C.steelD);
+      }
+      tazaLado(171, 126, nivel);
+      brazo(240, 180, 206, 60);
+      ctx.fillStyle = C.ink; ctx.font = '700 9px "Space Mono", monospace'; ctx.textAlign = 'left';
+      ctx.fillText((q * 28).toFixed(0) + ' s', 132, 100);
+    } else if (i === 3) { // vapor a la leche
+      fondo(); maquina(); molinillo(0);
+      portafiltro(171, 68, 1);
+      tazaLado(171, 126, .75);
+      // jarra
+      ctx.save(); ctx.translate(214, 112);
+      ctx.beginPath(); ctx.moveTo(-14, -8); ctx.lineTo(14, -8); ctx.lineTo(12, 22); ctx.lineTo(-12, 22); ctx.closePath();
+      ctx.fillStyle = C.steel; ctx.fill(); ctx.strokeStyle = C.steelD; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(0, -8, 14, 3, 0, 0, Math.PI * 2); ctx.fillStyle = C.milk; ctx.fill();
+      for (var b = 0; b < 4; b++) { circ(Math.cos(anim * 6 + b * 1.6) * 9, -8 + Math.sin(anim * 6 + b * 1.6) * 1.5, 1.4, '#fff', C.steel, .6); }
+      ctx.restore();
+      linea(214, 58, 214, 108, C.steel, 3);
+      vapor(214, 98, anim, 5);
+      brazo(150, 180, 196, 118);
+      bocadillo(120, 160, q < .6 ? 'PSSSSHHH' : 'TSS TSS');
+      ctx.fillStyle = C.ink; ctx.font = '700 9px "Space Mono", monospace'; ctx.textAlign = 'left';
+      ctx.fillText(Math.round(lerp(4, 62, ease(q))) + ' °C', 6, 172);
+    } else if (i === 4) { // latte art desde arriba
+      ctx.fillStyle = C.counter; ctx.fillRect(0, 0, W, H);
+      for (var vx = 0; vx < W; vx += 20) linea(vx, 0, vx, H, 'rgba(20,20,20,.04)', 1);
+      circ(124, 96, 70, '#fff', C.ink, 2);
+      rr(170, 88, 28, 14, 7, '#fff', C.ink, 2);
+      circ(124, 96, 50, '#fff', C.ink, 2);
+      circ(124, 96, 43, C.crema);
+      var m = ease(Math.min(1, q / .35));
+      if (m > 0) { ctx.globalAlpha = .55; circ(124, 96, 10 + 30 * m, C.latte); ctx.globalAlpha = 1; }
+      var h = ease((q - .3) / .5);
+      var cy = 96 + (1 - h) * 8;
+      if (h > 0) corazon(124, cy, 30 * h, C.milk);
+      var pull = ease((q - .82) / .16);
+      if (pull > 0) linea(124, cy - 16, 124, lerp(cy - 16, cy + 28, pull), C.crema, 2.5);
+      // jarra inclinada y chorro
+      var pourX = 124, pourY = q < .82 ? cy - 6 : lerp(cy - 16, cy + 28, pull);
+      ctx.save(); ctx.translate(lerp(70, 112, ease(q)), 28); ctx.rotate(.7);
+      rr(-16, -14, 32, 26, 4, C.steel, C.steelD, 2);
+      ctx.restore();
+      if (q < .97) linea(lerp(84, 124, ease(q)), 40, pourX, pourY, '#fff', 3.5);
+      brazo(0, 70, lerp(52, 92, ease(q)), 22);
+      if (q > .9) bocadillo(124, 172, '¡CORAZÓN!');
+    } else { // servido en barra
+      fondo();
+      // frontal de la barra
+      ctx.fillStyle = C.ink; ctx.fillRect(0, 140, W, 40);
+      ctx.fillStyle = '#5E5B58'; ctx.font = '900 16px Archivo, Arial, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('TRANQUILO.  TRANQUILO.  TRANQUILO.', 120, 166);
+      linea(0, 138, W, 138, C.ink, 4);
+      var e2 = ease(Math.min(1, q / .7));
+      var cx = lerp(60, 168, e2);
+      tazaLado(cx, 132, 0, C.latte);
+      corazon(cx, 107.5, 5, C.milk);
+      if (!reduce) vapor(cx, 100, anim * .7, 3);
+      if (q < .75) brazo(0, 120, cx - 28, 128);
+      var c = ease((q - .55) / .45);
+      if (c > 0) { // mano del cliente
+        var hx = lerp(260, cx + 26, c);
+        linea(260, 96, hx + 8, 112, '#8C8A87', 16);
+        circ(hx, 116, 8, C.skinD, '#a87452', 1.5);
+      }
+      ctx.fillStyle = C.ink; ctx.font = '700 9px "Space Mono", monospace'; ctx.textAlign = 'left';
+      ctx.fillText('Ticket 0037 · Mesa: Tranquilo', 8, 14);
+      if (q > .5) bocadillo(120, 52, q > .85 ? '¡MARCHANDO!' : '¡UN LATTE!');
+    }
+    return i;
+  }
+
+  var ultimoPaso = -1;
+  function frame(ts) {
+    var i = dibujar(progreso, (ts || 0) / 1000);
+    if (i !== ultimoPaso) {
+      ultimoPaso = i;
+      txtPaso.textContent = PASOS[i].t;
+      numPaso.textContent = (i + 1) + '/6';
+      dots.forEach(function (d, k) { d.classList.toggle('on', k <= i); });
+    }
+  }
+  function leerScroll() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    progreso = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 1;
+    if (reduce) frame(0);
+  }
+  function loop(ts) { if (!document.hidden && !caja.classList.contains('min')) frame(ts); requestAnimationFrame(loop); }
+  ajustar(); leerScroll(); frame(0);
+  window.addEventListener('scroll', leerScroll, { passive: true });
+  window.addEventListener('resize', function () { ajustar(); leerScroll(); frame(0); });
+  if (!reduce) requestAnimationFrame(loop);
+  document.getElementById('barista-toggle').addEventListener('click', function () {
+    var min = caja.classList.toggle('min');
+    this.setAttribute('aria-expanded', min ? 'false' : 'true');
+    this.textContent = min ? 'Ver barista' : 'Ocultar';
+    if (!min) { ajustar(); frame(0); }
+  });
+
+  // Copiar contacto
+  document.querySelectorAll('.copiar').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var val = btn.getAttribute('data-copy');
+      function ok() { btn.textContent = 'Copiado'; btn.classList.add('ok'); setTimeout(function () { btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 1800); }
+      function seleccionar() {
+        var el = btn.previousElementSibling, r = document.createRange();
+        r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        btn.textContent = 'Seleccionado';
+      }
+      try {
+        navigator.clipboard.writeText(val).then(ok, seleccionar);
+      } catch (e) { seleccionar(); }
+    });
+  });
+
+  // Fecha del ticket
+  try {
+    var d = new Date();
+    document.getElementById('fecha').textContent = d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch (e) {}
+})();
+</script>
+
+</body>
+</html>
